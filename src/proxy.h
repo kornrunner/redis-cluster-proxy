@@ -53,10 +53,10 @@ typedef struct proxyThread {
     list *unlinked_clients;
     list *pending_messages;
     list *connections_pool;
+    int is_spawning_connections;
     uint64_t next_client_id;
     sds msgbuffer;
 } proxyThread;
-
 
 typedef struct clientRequest {
     struct client *client;
