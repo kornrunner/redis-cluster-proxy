@@ -4747,6 +4747,16 @@ int main(int argc, char **argv) {
     proxyLogHdr("Log level: %s\n", redisProxyLogLevels[config.loglevel]);
     if (config.disable_multiplexing == CFG_DISABLE_MULTIPLEXING_ALWAYS)
         proxyLogHdr("Multiplexing disabled by default for every client.\n");
+    if (config.connections_pool.size == 0)
+        proxyLogHdr("Connections pool: disabled\n");
+    else {
+        proxyLogHdr("Connections pool size: %d (respawn %d every %dms "
+                    "if below %d)\n",
+                    config.connections_pool.size,
+                    config.connections_pool.spawn_rate,
+                    config.connections_pool.spawn_every,
+                    config.connections_pool.min_size);
+    }
     if (!parseAddress(config.cluster_address, &config.entry_node_host,
                       &config.entry_node_port, &config.entry_node_socket)) {
         proxyLogErr("Invalid address '%s'\n", config.cluster_address);
