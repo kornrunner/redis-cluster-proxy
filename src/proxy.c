@@ -2478,9 +2478,9 @@ static int disableMultiplexingForClient(client *c) {
             }
             if (poolconn != NULL) {
                 /* Associate the connection taken from pool to the new node. */
-                proxyLogDebug("Assigning connection taken from pool to "
-                              "node %s:%d on private connection for client "
-                              "%d:%" PRId64"\n", node->ip, node->port,
+                proxyLogDebug("Assigning connection from pool for "
+                              "node %s:%d to private connection owned by "
+                              "client %d:%" PRId64"\n", node->ip, node->port,
                               c->thread_id, c->id);
                 freeClusterConnection(node->connection);
                 node->connection = poolconn;
@@ -2757,17 +2757,19 @@ static void writeToClusterHandler(aeEventLoop *el, int fd, void *privdata,
             return;
         } else  {
             connection->has_read_handler = 1;
-            proxyLogDebug("Read reply handler installed "
-                          "for node %s:%d\n", ip, port);
+            if (node != NULL) {
+                proxyLogDebug("Read reply handler installed "
+                              "for node %s:%d\n", ip, port);
+            }
         }
     }
-    if (!connection->connected) {
+    if (config.loglevel == LOGLEVEL_DEBUG && !connection->connected) {
         if (node != NULL && node->cluster->owner) {
             client *c = node->cluster->owner;
             proxyLogDebug("Connected to node %s:%d (private connection "
                           "for client %d:%" PRId64 "\n",
                           ip, port, thread_id, c->id);
-        } else {
+        } else if (node != NULL) {
             proxyLogDebug("Connected to node %s:%d (thread %d)\n",
                           ip, port, thread_id);
         }
