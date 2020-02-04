@@ -2189,7 +2189,7 @@ static proxyThread *createProxyThread(int index) {
         printClusterConfiguration(thread->cluster);
         int nodecount = thread->cluster->masters_count +
                         thread->cluster->replicas_count;
-        int poolsize = config.connections_pool_size;
+        int poolsize = config.connections_pool.size;
         if (poolsize <= 0) poolsize = 1;
         proxy.min_reserved_fds += (nodecount * config.num_threads * poolsize);
         adjustOpenFilesLimit();
